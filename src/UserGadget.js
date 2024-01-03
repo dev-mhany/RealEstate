@@ -1,28 +1,28 @@
-import React from "react";
-
-// components
+import React, { Component } from "react";
 import UserGadgetLogged from "./UserGadget.logged.js";
 import UserGadgetNotLogged from "./UserGadget.notLogged";
+import { MyContextProvider } from "./MyContext";
+import PropTypes from "prop-types";
 
-const UserGadget = React.createClass({
-  propTypes: {
-    user: React.PropTypes.any,
-  },
-  contextTypes: {
-    lang: React.PropTypes.string,
-    user: React.PropTypes.any,
-  },
+class UserGadget extends Component {
+  static propTypes = {
+    lang: PropTypes.string,
+    user: PropTypes.any,
+  };
 
-  render: function () {
-    let gadget =
-      this.context.user !== null ? (
-        <UserGadgetLogged userId={this.context.user.uid} />
-      ) : (
-        <UserGadgetNotLogged />
+  render() {
+    const { lang, user } = this.context;
+
+    if (lang !== undefined && user !== undefined && user !== null) {
+      return <UserGadgetLogged userId={user.uid} />;
+    } else {
+      return (
+        <MyContextProvider>
+          <UserGadgetNotLogged />
+        </MyContextProvider>
       );
-
-    return <div className="user">{gadget}</div>;
-  },
-});
+    }
+  }
+}
 
 export default UserGadget;

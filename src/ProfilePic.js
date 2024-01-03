@@ -1,20 +1,19 @@
 import React from "react";
+import PropTypes from "prop-types"; // Import PropTypes from the correct package
 import Image from "./Image";
 
-const ProfilePic = React.createClass({
-  defaultImg: "default.png",
-  propTypes: {
-    image: React.PropTypes.string,
-    userId: React.PropTypes.string.isRequired,
-  },
-  render: function () {
-    let ref = `users/`;
-    let image = this.props.image
-      ? `${this.props.userId}/profilePic/${this.props.image}`
-      : this.defaultImg;
+function ProfilePic({ image, userId }) {
+  const ref = `users/`;
+  const defaultImg = "default.png";
 
-    return <Image url={`${ref}/${image}`} />;
-  },
-});
+  const imageUrl = image ? `${userId}/profilePic/${image}` : defaultImg;
+
+  return <Image url={`${ref}/${imageUrl}`} />;
+}
+
+ProfilePic.propTypes = {
+  image: PropTypes.string,
+  userId: PropTypes.string.isRequired,
+};
 
 export default ProfilePic;

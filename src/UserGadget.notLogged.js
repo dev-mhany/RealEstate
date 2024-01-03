@@ -1,25 +1,23 @@
+// UserGadgetNotLogged.js
 import React from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
+import { useMyContext } from "./MyContext"; // Import the hook
 
-const UserGadgetNotLogged = React.createClass({
-  contextTypes: {
-    lang: React.PropTypes.string,
-  },
+function UserGadgetNotLogged() {
+  const { lang } = useMyContext(); // Access the 'lang' value from the context
 
-  render: function () {
-    return (
-      <div>
-        <Link to={`${this.context.lang}/user/login`}>
-          <FormattedMessage id="login" />
-        </Link>{" "}
-        /{" "}
-        <Link to={`${this.context.lang}/user/register`}>
-          <FormattedMessage id="register" />
-        </Link>
-      </div>
-    );
-  },
-});
+  return (
+    <div>
+      <Link to={`${lang}/user/login`}>
+        <FormattedMessage id="login" />
+      </Link>{" "}
+      /{" "}
+      <Link to={`${lang}/user/register`}>
+        <FormattedMessage id="register" />
+      </Link>
+    </div>
+  );
+}
 
 export default UserGadgetNotLogged;

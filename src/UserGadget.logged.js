@@ -1,85 +1,80 @@
-import React from "react";
-import ReactFireMixin from "reactfire";
-import Firebase from "firebase";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { getAuth, signOut } from "firebase/auth";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { Link, useNavigate } from "react-router-dom"; // Import Link
 import ProfilePic from "./ProfilePic";
 import { FormattedMessage } from "react-intl";
-import { hashHistory, withRouter } from "react-router";
-import { Link } from "react-router";
 
-const UserGadgetLogged = React.createClass({
-  mixins: [ReactFireMixin],
-  propTypes: {
-    userId: React.PropTypes.string,
-  },
-  contextTypes: {
-    lang: React.PropTypes.string,
-    user: React.PropTypes.any,
-    switchLang: React.PropTypes.func,
-  },
-  getInitialState: function () {
-    return {
-      currentUser: {},
-    };
-  },
-  componentWillMount: function () {
-    this.bindAsObject(
-      Firebase.database().ref(`users/${this.props.userId}`),
-      "currentUser"
-    );
-  },
-  handleLogout: function (e) {
+const UserGadgetLogged = ({ userId }) => {
+  const [currentUser, setCurrentUser] = useState({});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const database = getDatabase();
+    const userRef = ref(database, `users/${userId}`);
+    const unsubscribe = onValue(userRef, (snapshot) => {
+      const userData = snapshot.val();
+      if (userData) {
+        setCurrentUser(userData);
+      }
+    });
+    return () => unsubscribe();
+  }, [userId]);
+
+  const handleLogout = async (e) => {
     e.preventDefault();
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
-    Firebase.auth()
-      .signOut()
-      .then(() => {
-        // redirect to homepage
-        hashHistory.push(this.context.lang);
-      });
-  },
-  switchLang(lang) {
-    this.props.router.push(this.context.lang);
-  },
-  render: function () {
-    let lang = this.context.lang;
-    const userId = this.props.userId;
-    return (
-      <div>
-        <button className="dropdown-toggle" data-toggle="dropdown">
-          <ProfilePic image={this.state.currentUser.image} userId={userId} />
-          <span className="userName">{this.state.currentUser.fname}</span>
-          <span className="drop-arow" />
-        </button>
+  let lang = "en"; // Replace with your language logic
 
-        <ul className="dropdown-menu user-drop">
-          <li>
-            <Link to={`${lang}/user/profile/${userId}`}>
-              <i className="fa fa-user" />
-              <FormattedMessage id="userLinks.myProfile" />
-            </Link>
-          </li>
-          <li>
-            <Link to={`${lang}/user/profile/edit`}>
-              <i className="fa fa-user" />
-              <FormattedMessage id="userLinks.editMyProfile" />
-            </Link>
-          </li>
-          <li>
-            <Link to={`${lang}/user/dashboard/properties`}>
-              <i className="fa fa-list" />
-              <FormattedMessage id="userLinks.myProperties" />
-            </Link>
-          </li>
-          <li>
-            <button onClick={this.handleLogout} className="logout-button">
-              <i className="fa fa-sign-out" />
-              <FormattedMessage id="userLinks.logout" />
-            </button>
-          </li>
-        </ul>
-      </div>
-    );
-  },
-});
+  return (
+    <div>
+      <button className="dropdown-toggle" data-toggle="dropdown">
+        <ProfilePic image={currentUser.image} userId={userId} />
+        <span className="userName">{currentUser.fname}</span>
+        <span className="drop-arow" />
+      </button>
 
-export default withRouter(UserGadgetLogged);
+      <ul className="dropdown-menu user-drop">
+        <li>
+          <Link to={`${lang}/user/profile/${userId}`}>
+            <i className="fa fa-user" />
+            <FormattedMessage id="userLinks.myProfile" />
+          </Link>
+        </li>
+        <li>
+          <Link to={`${lang}/user/profile/edit`}>
+            <i className="fa fa-user" />
+            <FormattedMessage id="userLinks.editMyProfile" />
+          </Link>
+        </li>
+        <li>
+          <Link to={`${lang}/user/dashboard/properties`}>
+            <i className="fa fa-list" />
+            <FormattedMessage id="userLinks.myProperties" />
+          </Link>
+        </li>
+        <li>
+          <button onClick={handleLogout} className="logout-button">
+            <i className="fa fa-sign-out" />
+            <FormattedMessage id="userLinks.logout" />
+          </button>
+        </li>
+      </ul>
+    </div>
+  );
+};
+
+UserGadgetLogged.propTypes = {
+  userId: PropTypes.string.isRequired,
+};
+
+export default UserGadgetLogged;

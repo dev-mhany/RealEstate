@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, IndexLink } from "react-router";
+import { Link, NavLink } from "react-router-dom"; // Import NavLink
 import UserGadget from "./UserGadget";
 import { FormattedMessage } from "react-intl";
 
@@ -18,7 +18,7 @@ const HeaderFront = React.createClass({
             <div className="row">
               <div className="col-md-12">
                 <div className="logo">
-                  <Link activeClassName="active" to={`/${lang}`}>
+                  <Link to={`/${lang}`}>
                     <img src="dist/images/logo.png" alt="HATA" />
                   </Link>
                 </div>
@@ -26,19 +26,22 @@ const HeaderFront = React.createClass({
                 <nav className="navbar collapse" id="mobile-menu">
                   <ul className="nav navbar-nav">
                     <li>
-                      <IndexLink activeClassName="active" to={`${lang}`}>
+                      <NavLink end activeClassName="active" to={`/${lang}`}>
                         <FormattedMessage id="menu.home" />
-                      </IndexLink>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link activeClassName="active" to={`/${lang}/about/`}>
+                      <NavLink activeClassName="active" to={`/${lang}/about/`}>
                         <FormattedMessage id="menu.about" />
-                      </Link>
+                      </NavLink>
                     </li>
                     <li>
-                      <Link activeClassName="active" to={`/${lang}/contact/`}>
+                      <NavLink
+                        activeClassName="active"
+                        to={`/${lang}/contact/`}
+                      >
                         <FormattedMessage id="menu.contact" />
-                      </Link>
+                      </NavLink>
                     </li>
                   </ul>
                 </nav>

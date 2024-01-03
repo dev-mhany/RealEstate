@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import firebase from "firebase/app";
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { IntlProvider } from "react-intl";
 import NotificationSystem from "react-notification-system";
 // Components
@@ -20,8 +21,9 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-initializeApp(firebaseConfig);
-
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 const AppContext = React.createContext();
 
 // Placeholder components for demonstration
@@ -34,10 +36,21 @@ const App = ({ children, params }) => {
   const lang = params.lang;
 
   useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       setLoggedIn(!!user);
     });
     return () => unsubscribe();
+  }, []);
+  useEffect(() => {
+    // Example Firestore query
+    const docRef = doc(db, "collectionName", "documentId");
+    getDoc(docRef).then((docSnap) => {
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+      } else {
+        console.log("No such document!");
+      }
+    });
   }, []);
 
   const messages = {
@@ -47,7 +60,7 @@ const App = ({ children, params }) => {
 
   const contextValue = {
     lang,
-    user: firebase.auth().currentUser,
+    user: auth.currentUser,
   };
 
   return (
