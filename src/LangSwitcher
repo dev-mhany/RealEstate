@@ -1,0 +1,24 @@
+import React from "react";
+import { hashHistory } from "react-router";
+
+const LangSwitcher = (props) => {
+  const switchLang = function (lang) {
+    hashHistory.push(lang);
+    return false;
+  };
+
+  let { langs, currentLang } = props;
+  let lang = currentLang !== "en" ? langs["en"] : langs["ar"];
+
+  return (
+    // Using a button instead of an anchor for better accessibility
+    <button
+      onClick={() => switchLang(lang.code)}
+      style={{ textDecoration: "underline" }}
+    >
+      {lang.text}
+    </button>
+  );
+};
+
+export default LangSwitcher;
