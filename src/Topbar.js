@@ -1,17 +1,17 @@
 import React from "react";
 import { FormattedMessage } from "react-intl";
+import PropTypes from "prop-types";
 import LangSwitcher from "./LangSwitcher";
 
-const Topbar = React.createClass({
-  contextTypes: {
-    lang: React.PropTypes.string,
-    user: React.PropTypes.any,
-  },
-  render: function () {
+class Topbar extends React.Component {
+  render() {
     let langs = {
       ar: { text: "Arabic", code: "ar" },
       en: { text: "English", code: "en" },
     };
+
+    const { lang } = this.context;
+
     return (
       <div className="top-bar">
         <div className="container">
@@ -29,14 +29,20 @@ const Topbar = React.createClass({
                 </a>
               </p>
               <p className="langSwitcher pull-right">
-                <LangSwitcher langs={langs} currentLang={this.context.lang} />
+                <LangSwitcher langs={langs} currentLang={lang} />{" "}
+                {/* Use the lang variable */}
               </p>
             </div>
           </div>
         </div>
       </div>
     );
-  },
-});
+  }
+}
+
+Topbar.contextTypes = {
+  lang: PropTypes.string,
+  user: PropTypes.any,
+};
 
 export default Topbar;

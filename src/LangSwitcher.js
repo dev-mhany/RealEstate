@@ -1,9 +1,11 @@
 import React from "react";
-import { hashHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LangSwitcher = (props) => {
+  const navigate = useNavigate();
+
   const switchLang = function (lang) {
-    hashHistory.push(lang);
+    navigate(lang);
     return false;
   };
 
@@ -13,7 +15,7 @@ const LangSwitcher = (props) => {
   return (
     // Using a button instead of an anchor for better accessibility
     <button
-      onClick={() => switchLang(lang.code)}
+      onClick={() => switchLang(lang)}
       style={{ textDecoration: "underline" }}
     >
       {lang.text}

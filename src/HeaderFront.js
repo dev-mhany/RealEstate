@@ -1,14 +1,16 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom"; // Import NavLink
+import React, { Component } from "react";
+import { Link, NavLink } from "react-router-dom";
 import UserGadget from "./UserGadget";
 import { FormattedMessage } from "react-intl";
+import PropTypes from "prop-types";
 
-const HeaderFront = React.createClass({
-  contextTypes: {
-    lang: React.PropTypes.string,
-    user: React.PropTypes.any,
-  },
-  render: function () {
+class HeaderFront extends Component {
+  static contextTypes = {
+    lang: PropTypes.string,
+    user: PropTypes.any,
+  };
+
+  render() {
     let lang = this.context.lang;
 
     return (
@@ -65,7 +67,7 @@ const HeaderFront = React.createClass({
         </header>
       </section>
     );
-  },
-});
+  }
+}
 
 export default HeaderFront;
